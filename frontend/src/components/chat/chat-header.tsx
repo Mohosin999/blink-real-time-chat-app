@@ -1,5 +1,4 @@
 import { getOtherUserAndGroup } from "@/lib/helper";
-import { PROTECTED_ROUTES } from "@/routes/routes";
 import type { ChatType } from "@/types/chat.type";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -30,7 +29,7 @@ const ChatHeader = ({ chat, currentUserId }: Props) => {
           text-muted-foreground cursor-pointer
           mr-2
           "
-            onClick={() => navigate(PROTECTED_ROUTES.CHAT)}
+            onClick={() => navigate("/")}
           />
         </div>
         <AvatarWithBadge

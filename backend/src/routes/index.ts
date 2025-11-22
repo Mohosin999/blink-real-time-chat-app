@@ -1,4 +1,36 @@
+// import { Router } from "express";
+// import { passportAuthenticateJwt } from "../config/passport";
+// import { controllers as authControllers } from "../api/v1/auth";
+// import { controllers as chatControllers } from "../api/v1/chat";
+// import { controllers as userControllers } from "../api/v1/user";
+// import { controllers as messageControllers } from "../api/v1/message";
+
+// const router = Router();
+
+// // Auth routes
+// router
+//   .post("/api/v1/auth/register", authControllers.register)
+//   .post("/api/v1/auth/login", authControllers.login)
+//   .post("/api/v1/auth/logout", authControllers.logout)
+//   .post("/api/v1/auth/status", authControllers.authStatus);
+
+// // Chat routes
+// router
+//   .use(passportAuthenticateJwt)
+//   .post("/api/v1/chats", chatControllers.createChat)
+//   .get("/api/v1/chats", chatControllers.getUserChats)
+//   .get("/api/v1/chats/:id", chatControllers.getSingleChat);
+
+// // Message routes
+// router.post("/api/v1/messages", messageControllers.sendMessage);
+
+// // User routes
+// router.get("/api/v1/users", passportAuthenticateJwt, userControllers.getUsers);
+
+// export default router;
+
 import { Router } from "express";
+import passport from "passport";
 import { passportAuthenticateJwt } from "../config/passport";
 import { controllers as authControllers } from "../api/v1/auth";
 import { controllers as chatControllers } from "../api/v1/chat";
@@ -7,16 +39,43 @@ import { controllers as messageControllers } from "../api/v1/message";
 
 const router = Router();
 
-// Auth routes
+/* -------------------------------------------
+               AUTH ROUTES
+-------------------------------------------- */
 router
   .post("/api/v1/auth/register", authControllers.register)
   .post("/api/v1/auth/login", authControllers.login)
   .post("/api/v1/auth/logout", authControllers.logout)
   .post("/api/v1/auth/status", authControllers.authStatus);
 
-// Chat routes
+/* -------------------------------------------
+          GOOGLE OAUTH ROUTES
+-------------------------------------------- */
+router.get(
+  // "/api/v1/auth/google",
+  "/api/v1/auth/google",
+  passport.authenticate("google", { scope: ["profile", "email"] })
+);
+
+router.get(
+  "/auth/google/callback",
+  // "/google/callback",
+  passport.authenticate("google", { session: false }),
+  authControllers.googleLoginCallback
+);
+
+// router.get("/me", isAuthenticated, (req, res) =>
+//   res.json({
+//     seccess: true,
+//     user: req.user,
+//   })
+// );
+
+/* -------------------------------------------
+              PROTECTED ROUTES
+-------------------------------------------- */
 router
-  .use(passportAuthenticateJwt)
+  .use(passportAuthenticateJwt) // all routes below need JWT
   .post("/api/v1/chats", chatControllers.createChat)
   .get("/api/v1/chats", chatControllers.getUserChats)
   .get("/api/v1/chats/:id", chatControllers.getSingleChat);
@@ -24,7 +83,7 @@ router
 // Message routes
 router.post("/api/v1/messages", messageControllers.sendMessage);
 
-// User routes
-router.get("/api/v1/users", passportAuthenticateJwt, userControllers.getUsers);
+// User route
+router.get("/api/v1/users", userControllers.getUsers);
 
 export default router;

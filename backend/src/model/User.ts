@@ -15,7 +15,7 @@ export interface UserDocument extends Document {
 
 const userSchema = new Schema(
   {
-    name: { type: String, required: true },
+    name: { type: String },
     email: {
       type: String,
       required: true,
@@ -25,8 +25,8 @@ const userSchema = new Schema(
     },
     password: {
       type: String,
-      required: true,
     },
+    googleId: { type: String },
     isAI: { type: Boolean, default: false },
     avatar: { type: String, default: null },
   },

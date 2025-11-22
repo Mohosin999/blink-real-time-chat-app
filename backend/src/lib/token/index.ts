@@ -26,3 +26,23 @@ export const setJwtAuthCookie = ({ res, userId }: Cookie) => {
 
 export const clearJwtAuthCookie = (res: Response) =>
   res.clearCookie("accessToken", { path: "/" });
+
+/**
+ * --------------------------------------------
+ * Generate JWT Token
+ * --------------------------------------------
+ */
+
+export function generateJwtToken(payload: { userId: string }) {
+  const secret = process.env.JWT_SECRET as string;
+
+  if (!secret) {
+    throw new Error("JWT_SECRET is missing in environment variables");
+  }
+
+  return jwt.sign(payload, secret, {
+    expiresIn: "7d", // token valid for 7 days
+    audience: "user", // must match your passport-jwt audience
+    algorithm: "HS256",
+  });
+}

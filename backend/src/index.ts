@@ -36,7 +36,7 @@ initializeSocket(server);
 
 const main = async () => {
   try {
-    connectDB();
+    await connectDB();
 
     server.listen(port, () => {
       console.log(`✅ Server is running on port ${port}`);
