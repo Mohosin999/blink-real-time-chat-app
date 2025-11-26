@@ -157,9 +157,9 @@ const Login = () => {
     login(values);
   };
 
-  // const handleLoginWithGoogle = () => {
-  //   window.location.href = `${import.meta.env.VITE_API_URL}/api/v1/auth/google`;
-  // };
+  const handleGoogleLogin = () => {
+    window.location.href = `${import.meta.env.VITE_API_URL}/api/v1/auth/google`;
+  };
 
   return (
     <div
@@ -222,15 +222,7 @@ const Login = () => {
                   {isLoggingIn && <Spinner />} Sign In
                 </Button>
 
-                <Button
-                  variant="outline"
-                  onClick={() =>
-                    window.open(
-                      `${import.meta.env.VITE_API_URL}/api/v1/auth/google`, // Remove the extra } at the end
-                      "_self"
-                    )
-                  }
-                >
+                <Button variant="outline" onClick={handleGoogleLogin}>
                   <FaGoogle className="text-orange-600" /> Login with Google
                 </Button>
 

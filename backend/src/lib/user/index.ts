@@ -11,6 +11,21 @@ export const getUsersService = async (userId: string) => {
   return users;
 };
 
+/**
+ * --------------------------------------------
+ * Find user by email
+ * --------------------------------------------
+ */
+export const findUserByEmail = async (email: string) => {
+  const user = await User.findOne({ email });
+  return user ? user : null;
+};
+
+/**
+ * --------------------------------------------
+ * Find or create Google user
+ * --------------------------------------------
+ */
 export async function findOrCreateGoogleUserService(profile: any) {
   const googleId = profile.id;
 

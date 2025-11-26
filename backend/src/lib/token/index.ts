@@ -1,5 +1,19 @@
-import jwt from "jsonwebtoken";
+import jwt, { SignOptions } from "jsonwebtoken";
 import { Response } from "express";
+import { serverError } from "../../utils/error";
+
+interface AccessTokenProps {
+  payload: { id: string; name: string; email: string };
+  algorithm?: jwt.Algorithm;
+  secret?: string;
+  expiresIn?: SignOptions["expiresIn"];
+}
+
+interface VarifyAccessTokenProps {
+  token: string;
+  algorithm?: jwt.Algorithm;
+  secret?: string;
+}
 
 type Time = `${number}${"s" | "m" | "h" | "d" | "w" | "y"}`;
 type Cookie = {
@@ -25,24 +39,50 @@ export const setJwtAuthCookie = ({ res, userId }: Cookie) => {
 };
 
 export const clearJwtAuthCookie = (res: Response) =>
-  res.clearCookie("accessToken", { path: "/" });
+  res.clearCookie("accessToken", { path: "/login" });
 
 /**
  * --------------------------------------------
- * Generate JWT Token
+ * Generate access token
  * --------------------------------------------
  */
 
-export function generateJwtToken(payload: { userId: string }) {
-  const secret = process.env.JWT_SECRET as string;
-
-  if (!secret) {
-    throw new Error("JWT_SECRET is missing in environment variables");
+export const generateAccessToken = ({
+  payload,
+  algorithm = "HS256",
+  secret = process.env.JWT_SECRET!,
+  expiresIn = "30m",
+}: AccessTokenProps) => {
+  try {
+    return jwt.sign(payload, secret, { algorithm, expiresIn });
+  } catch (error) {
+    console.log("[JWT]", error);
+    throw serverError();
   }
+};
 
-  return jwt.sign(payload, secret, {
-    expiresIn: "7d", // token valid for 7 days
-    audience: "user", // must match your passport-jwt audience
-    algorithm: "HS256",
-  });
-}
+//   try {
+//     return jwt.sign(userId, process.env.JWT_SECRET!);
+//   } catch (error) {
+//     console.log("[JWT]", error);
+//     throw serverError();
+//   }
+// };
+
+/**
+ * --------------------------------------------
+ * Verify access token
+ * --------------------------------------------
+ */
+export const verifyAccessToken = ({
+  token,
+  algorithm = "HS256",
+  secret = process.env.JWT_SECRET!,
+}: VarifyAccessTokenProps) => {
+  try {
+    return jwt.verify(token, secret, { algorithms: [algorithm] });
+  } catch (error) {
+    console.log("[JWT]", error);
+    throw serverError();
+  }
+};

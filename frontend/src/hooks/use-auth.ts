@@ -97,7 +97,7 @@ export const useAuth = create<AuthState>()((set) => ({
    */
   isAuthStatus: async () => {
     set({ isAuthStatusLoading: true });
-    
+
     try {
       const response = await API.get("/auth/status");
       set({ user: response.data.user });

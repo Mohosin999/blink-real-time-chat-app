@@ -66,6 +66,10 @@ passport.use(
   )
 );
 
+export const passportAuthenticateJwt = passport.authenticate("jwt", {
+  session: false,
+});
+
 /* ========================
     GOOGLE OAUTH STRATEGY
 ======================== */
@@ -74,7 +78,7 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-      callbackURL: process.env.GOOGLE_CALLBACK_URL!,
+      callbackURL: "/auth/google/callback",
     },
     async (_accessToken, _refreshToken, profile, done) => {
       try {
@@ -86,7 +90,3 @@ passport.use(
     }
   )
 );
-
-export const passportAuthenticateJwt = passport.authenticate("jwt", {
-  session: false,
-});
