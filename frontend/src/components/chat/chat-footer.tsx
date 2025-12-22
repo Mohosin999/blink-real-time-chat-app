@@ -108,6 +108,7 @@ const ChatFooter = ({
             </div>
           </div>
         )}
+        
         <Form {...form}>
           <form
             // onSubmit={form.handleSubmit(onSubmit)}
@@ -119,6 +120,7 @@ const ChatFooter = ({
             flex items-end gap-2
             "
           >
+            {/* Select Image */}
             <div className="flex items-center gap-1.5">
               <Button
                 type="button"
@@ -139,6 +141,7 @@ const ChatFooter = ({
                 onChange={handleImageChange}
               />
             </div>
+
             <FormField
               control={form.control}
               name="message"

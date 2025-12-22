@@ -16,9 +16,7 @@ const ChatReplyBar = ({ replyTo, currentUserId, onCancel }: Props) => {
     <div
       className="absolute bottom-16 left-0 right-0
     bg-card border-t animate-in slide-in-from-bottom
- pb-4 px-6
-
-    "
+ pb-4 px-6"
     >
       <div
         className="flex flex-1 justify-between mt-2 p-3 text-sm

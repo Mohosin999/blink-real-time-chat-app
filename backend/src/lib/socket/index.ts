@@ -44,8 +44,6 @@ export const initializeSocket = (httpServer: HTTPServer) => {
     const userId = socket.userId!;
     const newSocketId = socket.id;
 
-    console.log("socket connected", { userId, newSocketId });
-
     if (!socket.userId) {
       socket.disconnect();
       return;
@@ -66,7 +64,6 @@ export const initializeSocket = (httpServer: HTTPServer) => {
         try {
           await validateChatParticipant(chatId, userId);
           socket.join(`chat:${chatId}`);
-          console.log(`User ${userId} join room chat:${chatId}`);
 
           callback?.();
         } catch (error) {
@@ -78,7 +75,6 @@ export const initializeSocket = (httpServer: HTTPServer) => {
     socket.on("chat:leave", (chatId: string) => {
       if (chatId) {
         socket.leave(`chat:${chatId}`);
-        console.log(`User ${userId} left room chat:${chatId}`);
       }
     });
 
@@ -87,11 +83,6 @@ export const initializeSocket = (httpServer: HTTPServer) => {
         if (userId) onlineUsers.delete(userId);
 
         io?.emit("online:users", Array.from(onlineUsers.keys()));
-
-        console.log("socket disconnected", {
-          userId,
-          newSocketId,
-        });
       }
     });
   });
@@ -121,10 +112,6 @@ export const emitNewMessageToChatRoom = (
 ) => {
   const io = getIO();
   const senderSocketId = onlineUsers.get(senderId?.toString());
-
-  console.log(senderId, "senderId");
-  console.log(senderSocketId, "sender socketid exist");
-  console.log("All online users:", Object.fromEntries(onlineUsers));
 
   if (senderSocketId) {
     io.to(`chat:${chatId}`).except(senderSocketId).emit("message:new", message);
