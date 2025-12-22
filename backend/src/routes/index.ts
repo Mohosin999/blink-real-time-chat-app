@@ -45,7 +45,7 @@ router.get("/me", isAuthenticated, (req, res) =>
               PROTECTED ROUTES
 -------------------------------------------- */
 router
-  .use(passportAuthenticateJwt) // all routes below need JWT
+  .use("/api/v1", passportAuthenticateJwt)
   .post("/api/v1/chats", chatControllers.createChat)
   .get("/api/v1/chats", chatControllers.getUserChats)
   .get("/api/v1/chats/:id", chatControllers.getSingleChat);

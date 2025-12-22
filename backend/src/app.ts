@@ -12,6 +12,16 @@ app.use(routes);
 app.use(errorHandler);
 
 app.get(
+  "/",
+  asyncHandler(async (_req: Request, res: Response) => {
+    res.status(200).json({
+      message: "Everything is Okay",
+      status: "OK",
+    });
+  })
+);
+
+app.get(
   "/health",
   asyncHandler(async (_req: Request, res: Response) => {
     res.status(200).json({
