@@ -19,7 +19,8 @@ const AsideBar = () => {
 
   const { theme, setTheme } = useTheme();
 
-  const isOnline = isUserOnline(user?._id);
+  // Logged in user is always online
+  const isOnline = !!user;
 
   return (
     <aside
@@ -48,7 +49,7 @@ const AsideBar = () => {
           <Button
             variant="outline"
             size="icon"
-            className="border-0 rounded-full"
+            className="border-0 rounded-full cursor-pointer"
             onClick={() => setTheme(theme === "light" ? "dark" : "light")}
           >
             <Sun
@@ -75,7 +76,7 @@ const AsideBar = () => {
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <div role="button">
+              <div role="button" className="cursor-pointer">
                 {/* {Avatar} */}
                 <AvatarWithBadge
                   name={user?.name || "unKnown"}

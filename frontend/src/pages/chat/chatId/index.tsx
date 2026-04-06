@@ -13,7 +13,7 @@ import { useEffect, useState } from "react";
 const SingleChat = () => {
   const chatId = useChatId();
   const { fetchSingleChat, isSingleChatLoading, singleChat } = useChat();
-  const { socket } = useSocket();
+  const { socket, typingUsers } = useSocket();
   const { user } = useAuth();
 
   const [replyTo, setReplyTo] = useState<MessageType | null>(null);
@@ -21,6 +21,10 @@ const SingleChat = () => {
   const currentUserId = user?._id || null;
   const chat = singleChat?.chat;
   const messages = singleChat?.messages || [];
+
+  const chatTypingUsers = typingUsers[chatId || ""] || [];
+  const otherTypingUsers = chatTypingUsers.filter(id => id !== currentUserId);
+  const isTyping = otherTypingUsers.length > 0;
 
   useEffect(() => {
     if (!chatId) return;
@@ -39,6 +43,7 @@ const SingleChat = () => {
 
     return () => {
       socket.emit("chat:leave", chatId);
+      socket.emit("stopTyping", chatId);
     };
   }, [chatId, socket]);
 
@@ -69,7 +74,12 @@ const SingleChat = () => {
             description="No messages yet. Send the first message"
           />
         ) : (
-          <ChatBody chatId={chatId} messages={messages} onReply={setReplyTo} />
+          <ChatBody 
+            chatId={chatId} 
+            messages={messages} 
+            onReply={setReplyTo}
+            isTyping={isTyping}
+          />
         )}
       </div>
 

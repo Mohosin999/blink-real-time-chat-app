@@ -34,20 +34,33 @@
 
 // export default App;
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "./hooks/use-auth";
 import AppRoutes from "./routes";
 import { Spinner } from "./components/ui/spinner";
 import Logo from "./components/logo";
+import { useStore } from "zustand";
+import { persist } from "zustand/middleware";
 
 function App() {
   const { user, isAuthStatus, isAuthStatusLoading } = useAuth();
+  const [isRehydrated, setIsRehydrated] = useState(false);
 
   useEffect(() => {
-    isAuthStatus(); // always check auth on app load
+    // Give time for persist to rehydrate
+    const timer = setTimeout(() => {
+      setIsRehydrated(true);
+    }, 100);
+    return () => clearTimeout(timer);
   }, []);
 
-  if (isAuthStatusLoading && !user) {
+  useEffect(() => {
+    if (isRehydrated) {
+      isAuthStatus();
+    }
+  }, [isRehydrated, isAuthStatus]);
+
+  if (!isRehydrated || (isAuthStatusLoading && !user)) {
     return (
       <div className="flex flex-col items-center justify-center h-screen">
         <Logo imgClass="size-20" showText={false} />

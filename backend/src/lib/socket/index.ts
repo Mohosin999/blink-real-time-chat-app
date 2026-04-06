@@ -22,13 +22,30 @@ export const initializeSocket = (httpServer: HTTPServer) => {
 
   io.use(async (socket: AuthenticatedSocket, next) => {
     try {
-      const rowCookie = socket.handshake.headers.cookie;
-      if (!rowCookie) return next(new Error("Unauthorized"));
+      let token = socket.handshake.auth.token;
 
-      const token = rowCookie?.split("=")?.[1]?.trim();
+      if (!token) {
+        const cookieHeader = socket.handshake.headers.cookie;
+        if (cookieHeader) {
+          const cookies = cookieHeader.split(";").map((c) => c.trim());
+          for (const cookie of cookies) {
+            const [key, ...valueParts] = cookie.split("=");
+            if (key === "accessToken") {
+              token = valueParts.join("=");
+              break;
+            }
+          }
+        }
+      }
+
+      console.log("[Socket Auth] Token received:", token ? "yes" : "no");
+
       if (!token) return next(new Error("Unauthorized"));
 
-      const decodedToken = jwt.verify(token, process.env.JWT_SECRET!) as {
+      const decodedToken = jwt.verify(token, process.env.JWT_SECRET!, {
+        algorithms: ["HS256"],
+        audience: ["user"],
+      }) as {
         userId: string;
       };
       if (!decodedToken) return next(new Error("Unauthorized"));
@@ -36,6 +53,7 @@ export const initializeSocket = (httpServer: HTTPServer) => {
       socket.userId = decodedToken.userId;
       next();
     } catch (error) {
+      console.log("[Socket Auth] Error:", error);
       next(new Error("Internal server error"));
     }
   });
@@ -76,6 +94,21 @@ export const initializeSocket = (httpServer: HTTPServer) => {
       if (chatId) {
         socket.leave(`chat:${chatId}`);
       }
+    });
+
+    socket.on("typing", (chatId: string) => {
+      socket.join(`chat:${chatId}`);
+      io?.to(`chat:${chatId}`).emit("typing", {
+        chatId,
+        userId,
+      });
+    });
+
+    socket.on("stopTyping", (chatId: string) => {
+      io?.to(`chat:${chatId}`).emit("stopTyping", {
+        chatId,
+        userId,
+      });
     });
 
     socket.on("disconnect", () => {

@@ -1,6 +1,6 @@
 import { z } from "zod";
 import type { MessageType } from "@/types/chat";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
@@ -10,6 +10,7 @@ import { Form, FormField, FormItem } from "../ui/form";
 import { Input } from "../ui/input";
 import ChatReplyBar from "./chat-reply-bar";
 import { useChat } from "@/hooks/use-chat";
+import { useSocket } from "@/hooks/use-socket";
 
 interface Props {
   chatId: string | null;
@@ -28,9 +29,11 @@ const ChatFooter = ({
   });
 
   const { sendMessage, isSendingMsg } = useChat();
+  const { emitTyping, emitStopTyping } = useSocket();
 
   const [image, setImage] = useState<string | null>(null);
   const imageInputRef = useRef<HTMLInputElement | null>(null);
+  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const form = useForm({
     resolver: zodResolver(messageSchema),
@@ -38,6 +41,27 @@ const ChatFooter = ({
       message: "",
     },
   });
+
+  const handleTyping = () => {
+    if (!chatId) return;
+    emitTyping(chatId);
+    
+    if (typingTimeoutRef.current) {
+      clearTimeout(typingTimeoutRef.current);
+    }
+    
+    typingTimeoutRef.current = setTimeout(() => {
+      emitStopTyping(chatId);
+    }, 2000);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -63,13 +87,17 @@ const ChatFooter = ({
       toast.error("Please enter a message or select an image");
       return;
     }
+    
+    if (chatId) {
+      emitStopTyping(chatId);
+    }
+    
     const payload = {
       chatId,
       content: values.message,
       image: image || undefined,
       replyTo: replyTo,
     };
-    //Send Message
     sendMessage(payload);
 
     onCancelReply();
@@ -153,6 +181,10 @@ const ChatFooter = ({
                     autoComplete="off"
                     placeholder="Type new message"
                     className="min-h-[40px] bg-background"
+                    onChange={(e) => {
+                      field.onChange(e);
+                      handleTyping();
+                    }}
                   />
                 </FormItem>
               )}

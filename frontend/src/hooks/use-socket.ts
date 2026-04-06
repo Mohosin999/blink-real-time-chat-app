@@ -7,13 +7,17 @@ const BASE_URL =
 interface SocketState {
   socket: Socket | null;
   onlineUsers: string[];
+  typingUsers: Record<string, string[]>;
   connectSocket: () => void;
   disconnectSocket: () => void;
+  emitTyping: (chatId: string) => void;
+  emitStopTyping: (chatId: string) => void;
 }
 
 export const useSocket = create<SocketState>()((set, get) => ({
   socket: null,
   onlineUsers: [],
+  typingUsers: {},
 
   connectSocket: () => {
     const { socket } = get();
@@ -30,9 +34,42 @@ export const useSocket = create<SocketState>()((set, get) => ({
       console.log("Socket connected", newSocket.id);
     });
 
+    newSocket.on("connect_error", (err) => {
+      console.error("Socket connection error:", err.message);
+    });
+
     newSocket.on("online:users", (userIds) => {
       console.log("Online users", userIds);
       set({ onlineUsers: userIds });
+    });
+
+    newSocket.on("typing", ({ chatId, userId }) => {
+      console.log("Received typing event:", chatId, userId);
+      set((state) => {
+        const currentTyping = state.typingUsers[chatId] || [];
+        if (!currentTyping.includes(userId)) {
+          return {
+            typingUsers: {
+              ...state.typingUsers,
+              [chatId]: [...currentTyping, userId],
+            },
+          };
+        }
+        return state;
+      });
+    });
+
+    newSocket.on("stopTyping", ({ chatId, userId }) => {
+      console.log("Received stopTyping event:", chatId, userId);
+      set((state) => {
+        const currentTyping = state.typingUsers[chatId] || [];
+        return {
+          typingUsers: {
+            ...state.typingUsers,
+            [chatId]: currentTyping.filter((id) => id !== userId),
+          },
+        };
+      });
     });
   },
 
@@ -41,6 +78,20 @@ export const useSocket = create<SocketState>()((set, get) => ({
     if (socket) {
       socket.disconnect();
       set({ socket: null });
+    }
+  },
+
+  emitTyping: (chatId: string) => {
+    const { socket } = get();
+    if (socket?.connected) {
+      socket.emit("typing", chatId);
+    }
+  },
+
+  emitStopTyping: (chatId: string) => {
+    const { socket } = get();
+    if (socket?.connected) {
+      socket.emit("stopTyping", chatId);
     }
   },
 }));

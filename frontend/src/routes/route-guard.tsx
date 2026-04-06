@@ -13,7 +13,7 @@ const RouteGuard = ({ requireAuth }: Props) => {
   // যদি রুট Protected হয় এবং user লগইন করা না থাকে
   // তখন user কে "/" এ পাঠিয়ে দাও (login/home)
   // ------------------------------------------
-  if (requireAuth && !user) return <Navigate to="/" replace />;
+  if (requireAuth && !user) return <Navigate to="/sign-in" replace />;
 
   // ------------------------------------------
   // 2️⃣ Public route: requireAuth = false

@@ -8,8 +8,9 @@ interface Props {
   chatId: string | null;
   messages: MessageType[];
   onReply: (message: MessageType) => void;
+  isTyping?: boolean;
 }
-const ChatBody = ({ chatId, messages, onReply }: Props) => {
+const ChatBody = ({ chatId, messages, onReply, isTyping }: Props) => {
   const { socket } = useSocket();
   const { addNewMessage } = useChat();
   const bottomRef = useRef<HTMLDivElement | null>(null);
@@ -42,6 +43,13 @@ const ChatBody = ({ chatId, messages, onReply }: Props) => {
           onReply={onReply}
         />
       ))}
+      
+      {isTyping && (
+        <div className="text-sm text-muted-foreground px-4 py-1">
+          typing...
+        </div>
+      )}
+      
       <div ref={bottomRef} />
     </div>
   );

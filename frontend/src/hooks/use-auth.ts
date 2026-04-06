@@ -39,7 +39,6 @@ export const useAuth = create<AuthState>()(
 
           set({ user: res.data.user });
 
-          // socket connect only once
           useSocket.getState().connectSocket();
 
           toast.success("Register successfully");
@@ -82,7 +81,7 @@ export const useAuth = create<AuthState>()(
           useSocket.getState().disconnectSocket();
 
           toast.success("Logout successfully");
-          window.open(`${import.meta.env.VITE_API_URL}/sign-in`, "_self");
+          window.location.href = "/sign-in";
         } catch (err: any) {
           toast.error(err.response?.data?.message || "Logout failed");
         }
@@ -92,19 +91,25 @@ export const useAuth = create<AuthState>()(
        * Auth Status (ONLY when needed)
        * --------------------------------- */
       isAuthStatus: async () => {
-        // 🚨 important: if already have user, skip API call
-        if (get().user) return;
-
+        const existingUser = get().user;
+        
+        // If we already have a user from persist, skip API call and just connect socket
+        if (existingUser) {
+          useSocket.getState().connectSocket();
+          return;
+        }
+        
         set({ isAuthStatusLoading: true });
 
         try {
           const res = await API.get("/auth/status");
 
-          set({ user: res.data.user });
-
-          useSocket.getState().connectSocket();
+          if (res.data.user) {
+            set({ user: res.data.user });
+            useSocket.getState().connectSocket();
+          }
         } catch {
-          set({ user: null });
+          // API failed, user remains null
         } finally {
           set({ isAuthStatusLoading: false });
         }
@@ -112,19 +117,15 @@ export const useAuth = create<AuthState>()(
     }),
     {
       name: "auth-storage",
-      // storage: createJSONStorage(() => localStorage),
-
-      // // ✅ ONLY persist user
-      // partialize: (state) => ({
-      //   user: state.user,
-      // }),
-
-      // // ✅ reload হলে socket auto connect
-      // onRehydrateStorage: () => (state) => {
-      //   if (state?.user) {
-      //     useSocket.getState().connectSocket();
-      //   }
-      // },
+      partialize: (state) => ({
+        user: state.user,
+      }),
+      onRehydrateStorage: () => (state) => {
+        if (state?.user) {
+          useSocket.getState().connectSocket();
+          useAuth.getState().isAuthStatus();
+        }
+      },
     }
   )
 );
