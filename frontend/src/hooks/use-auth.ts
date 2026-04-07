@@ -129,7 +129,6 @@ export const useAuth = create<AuthState>()(
       onRehydrateStorage: () => (state) => {
         if (state?.user) {
           useSocket.getState().connectSocket();
-          useAuth.getState().isAuthStatus();
         }
       },
     }

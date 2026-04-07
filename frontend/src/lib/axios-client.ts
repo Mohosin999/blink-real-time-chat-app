@@ -9,3 +9,14 @@ export const API = axios.create({
   baseURL: getBaseURL(),
   withCredentials: true,
 });
+
+API.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      console.warn("Unauthorized - clearing auth state");
+      localStorage.removeItem("auth-storage");
+    }
+    return Promise.reject(error);
+  }
+);
