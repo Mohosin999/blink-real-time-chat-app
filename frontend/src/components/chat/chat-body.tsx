@@ -19,13 +19,18 @@ const ChatBody = ({ chatId, messages, onReply }: Props) => {
     if (!socket) return;
 
     const handleNewMessage = (msg: MessageType) => addNewMessage(chatId, msg);
-    const handleMessageDeleted = ({ messageId }: { chatId: string; messageId: string }) => {
+    const handleMessageDeleted = ({
+      messageId,
+    }: {
+      chatId: string;
+      messageId: string;
+    }) => {
       removeMessage(chatId, messageId);
     };
 
     socket.on("message:new", handleNewMessage);
     socket.on("message:deleted", handleMessageDeleted);
-    
+
     return () => {
       socket.off("message:new", handleNewMessage);
       socket.off("message:deleted", handleMessageDeleted);
@@ -40,6 +45,7 @@ const ChatBody = ({ chatId, messages, onReply }: Props) => {
   }, [messages]);
 
   return (
+    // <div className="w-full max-w-6xl mx-auto flex flex-col px-3 py-2">
     <div className="w-full max-w-6xl mx-auto flex flex-col px-3 py-2">
       {messages.map((message) => (
         <ChatBodyMessage

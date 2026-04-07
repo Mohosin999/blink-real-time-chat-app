@@ -9,12 +9,29 @@ const AppLayout = () => {
 
   return (
     <AppWrapper>
-      <div className="h-full">
-        {/* ChatList - handles its own visibility based on chatId */}
-        <ChatList />
+      <div className="h-screen flex overflow-hidden">
+        {/* ================= LEFT SIDE (Chat List) ================= */}
+        <div
+          className={cn(
+            "h-full flex-shrink-0",
+            // Mobile behavior
+            chatId ? "hidden lg:block" : "block",
+            // Desktop fixed width
+            "lg:w-[420px]",
+            "border-r border-border bg-sidebar",
+          )}
+        >
+          <ChatList />
+        </div>
 
-        {/* Chat content area */}
-        <div className={cn("h-full", !chatId ? "hidden lg:block" : "block")}>
+        {/* ================= RIGHT SIDE (Chat Area) ================= */}
+        <div
+          className={cn(
+            "flex-1 h-full flex flex-col min-w-0",
+            // Mobile behavior
+            chatId ? "block" : "hidden lg:flex",
+          )}
+        >
           <Outlet />
         </div>
       </div>

@@ -45,11 +45,11 @@ const ChatFooter = ({
   const handleTyping = () => {
     if (!chatId) return;
     emitTyping(chatId);
-    
+
     if (typingTimeoutRef.current) {
       clearTimeout(typingTimeoutRef.current);
     }
-    
+
     typingTimeoutRef.current = setTimeout(() => {
       emitStopTyping(chatId);
     }, 2000);
@@ -87,11 +87,11 @@ const ChatFooter = ({
       toast.error("Please enter a message or select an image");
       return;
     }
-    
+
     if (chatId) {
       emitStopTyping(chatId);
     }
-    
+
     const payload = {
       chatId,
       content: values.message,
@@ -107,9 +107,15 @@ const ChatFooter = ({
 
   return (
     <>
-      <div
+      {/* <div
         className="sticky bottom-0
        inset-x-0 z-[999]
+       bg-card border-t border-border py-4
+      "
+      > */}
+      <div
+        className="sticky bottom-0
+       inset-x-0 z-[40]
        bg-card border-t border-border py-4
       "
       >
@@ -136,7 +142,7 @@ const ChatFooter = ({
             </div>
           </div>
         )}
-        
+
         <Form {...form}>
           <form
             // onSubmit={form.handleSubmit(onSubmit)}
