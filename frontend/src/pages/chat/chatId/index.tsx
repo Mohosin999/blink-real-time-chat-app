@@ -64,7 +64,8 @@ const SingleChat = () => {
   }
 
   return (
-    <div className="relative h-svh flex flex-col">
+    // <div className="relative h-svh flex flex-col">
+    <div className="relative h-full flex flex-col">
       <ChatHeader
         chat={chat}
         currentUserId={currentUserId}
@@ -72,7 +73,8 @@ const SingleChat = () => {
         typingUsers={otherTypingUsers}
       />
 
-      <div className="flex-1 overflow-y-auto bg-background">
+      {/* <div className="flex-1 overflow-y-auto bg-background"> */}
+      <div className="flex-1 overflow-y-auto bg-background pb-px">
         {messages.length === 0 ? (
           <EmptyState
             title="Start a conversation"

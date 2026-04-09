@@ -109,13 +109,12 @@ const ChatFooter = ({
     <>
       {/* <div
         className="sticky bottom-0
-       inset-x-0 z-[999]
+       inset-x-0 z-[40]
        bg-card border-t border-border py-4
       "
       > */}
       <div
-        className="sticky bottom-0
-       inset-x-0 z-[40]
+        className="z-[40]
        bg-card border-t border-border py-4
       "
       >

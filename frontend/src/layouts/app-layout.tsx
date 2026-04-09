@@ -14,12 +14,8 @@ const AppLayout = () => {
         <div
           className={cn(
             "h-full flex-shrink-0",
-            // Mobile behavior
             chatId ? "hidden lg:block" : "block",
-            // Desktop fixed width
-            // "lg:w-[420px]",
             chatId ? "w-[420px]" : "lg:w-[380px]",
-            // "border-r border-border bg-sidebar",
           )}
         >
           <ChatList />
@@ -29,7 +25,6 @@ const AppLayout = () => {
         <div
           className={cn(
             "flex-1 h-full flex flex-col min-w-0",
-            // Mobile behavior
             chatId ? "block" : "hidden lg:flex",
           )}
         >
