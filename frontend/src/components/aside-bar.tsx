@@ -86,14 +86,17 @@ const AsideBar = () => {
               </div>
             </DropdownMenuTrigger>
             <DropdownMenuContent
-              className="w-48 rounded-lg z-[99999]"
+              className="w-48 rounded-lg ml-2 z-[99999]"
               align="end"
             >
-              <DropdownMenuItem>
+              <DropdownMenuItem className="py-2 cursor-pointer">
                 <UserPen className="mr-0.5" />
                 My Account
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={logout} className="cursor-pointer">
+              <DropdownMenuItem
+                onClick={logout}
+                className="py-2 cursor-pointer"
+              >
                 <LogOutIcon className="mr-0.5" />
                 Logout
               </DropdownMenuItem>
