@@ -111,7 +111,11 @@ const SignUp = () => {
                   )}
                 />
 
-                <Button disabled={isSigningUp} type="submit" className="w-full">
+                <Button
+                  disabled={isSigningUp}
+                  type="submit"
+                  className="w-full cursor-pointer"
+                >
                   {isSigningUp && <Spinner />} Sign Up
                 </Button>
 

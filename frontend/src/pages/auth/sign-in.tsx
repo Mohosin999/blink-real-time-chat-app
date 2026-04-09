@@ -95,7 +95,11 @@ const SignIn = () => {
                   )}
                 />
 
-                <Button disabled={isLoggingIn} type="submit" className="w-full">
+                <Button
+                  disabled={isLoggingIn}
+                  type="submit"
+                  className="w-full cursor-pointer"
+                >
                   {isLoggingIn && <Spinner />} Sign In
                 </Button>
 
