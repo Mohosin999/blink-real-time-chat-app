@@ -1,6 +1,6 @@
 # Chat App
 
-A modern, full-stack real-time chat application built with React, Node.js, Express, MongoDB, and Socket.IO, featuring one-on-one messaging, group chats, message replies, image sharing, typing indicators, and online presence tracking.
+Real-Time Chat App is a full-stack messaging platform built with React, Node.js, and Socket.IO, delivering seamless one-on-one and group conversations with instant message delivery. Users can share images, reply to specific messages, see typing indicators, and view online presence in real time. The app features secure JWT authentication, dark/light theme, optimistic UI updates, and soft message deletion. Powered by MongoDB for data persistence and Cloudinary for image hosting, it provides a responsive, distraction-free communication experience across all devices.
 
 ![Tech Stack](https://img.shields.io/badge/Stack-React%20%7C%20Node.js%20%7C%20MongoDB%20%7C%20Socket.IO-blue)
 
